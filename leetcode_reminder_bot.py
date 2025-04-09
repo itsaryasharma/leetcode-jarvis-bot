@@ -1,33 +1,40 @@
+import os
 import asyncio
-from datetime import datetime, time, timedelta
+from datetime import datetime
 from telegram import Bot
 import pytz
 import schedule
+import time
 
-# Your credentials
-BOT_TOKEN = '7742371511:AAF2sADGo5VO9OX92TWfZYx9JzjuMHGNXNc'
-USER_ID = 845682054  # Your Telegram user ID
-TIMEZONE = pytz.timezone('Asia/Kolkata')  # IST
+# === Environment Variables ===
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+USER_ID = int(os.getenv("TELEGRAM_USER_ID"))
 
-# Create bot instance
+# === Timezone (IST) ===
+TIMEZONE = pytz.timezone('Asia/Kolkata')
+
+# === Telegram Bot Instance ===
 bot = Bot(token=BOT_TOKEN)
 
-# Define the reminder message
+# === Reminder Message Logic ===
 async def send_reminder():
     now = datetime.now(TIMEZONE).strftime('%d-%b %I:%M %p')
     message = f"🧠 Hey boss, it’s {now} IST.\nDon't forget to submit on LeetCode and keep the streak alive! 🔥"
     await bot.send_message(chat_id=USER_ID, text=message)
 
-# Wrapper for schedule to work with async
+# === Synchronous Job Wrapper ===
 def job():
-    asyncio.run(send_reminder())
+    try:
+        asyncio.run(send_reminder())
+    except Exception as e:
+        print(f"Error sending reminder: {e}")
 
-# Schedule the job
-schedule.every().day.at("20:45").do(job)  # 8:45 PM IST
+# === Daily Schedule at 8:45 PM IST ===
+schedule.every().day.at("20:45").do(job)
 
 print("✅ Jarvis is now running and monitoring your LeetCode streak, boss...")
 
-# Keep the script running
+# === Main Loop ===
 while True:
     schedule.run_pending()
-    asyncio.sleep(1)
+    time.sleep(1)
