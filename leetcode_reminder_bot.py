@@ -10,6 +10,16 @@ import time
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 USER_ID = int(os.getenv("TELEGRAM_USER_ID"))
 
+# Debugging environment variable load
+print("🔧 Starting Jarvis bot...")
+print("BOT_TOKEN is None:", BOT_TOKEN is None)
+print("USER_ID is None:", USER_ID is None)
+
+# Check if the environment variables are missing
+if BOT_TOKEN is None or USER_ID is None:
+    print("❗ Error: BOT_TOKEN or USER_ID is not set. Please check your environment variables.")
+    exit(1)
+
 # === Timezone (IST) ===
 TIMEZONE = pytz.timezone('Asia/Kolkata')
 
